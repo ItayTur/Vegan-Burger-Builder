@@ -5,12 +5,11 @@ class BurgerBuilder extends Component {
 
     state = {
         ingredients: {
-        salad: 1,
-        "veggie-bacon": 1,
-        "soy-cheese": 2,
-        "beyond-meat": 2
+        "salad":0,
+        "veggie-bacon":0,
+        "soy-cheese":0,
+        "beyond-meat":0
         }
-        
     }
 
     render() {
