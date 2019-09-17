@@ -4,14 +4,15 @@ import BurgerIngredient from "../Burger/BurgerIngredient/BurgerIngredient";
 
 const burger = props => {
   let jsxIngredients = Object.keys(props.ingredients)
-    .map(ingredientKey =>
-      [...Array(props.ingredients[ingredientKey])].map((_, i) => {
+    .map(ingredientKey => [...Array(props.ingredients[ingredientKey])].map((_, i) => {
         return (
           <BurgerIngredient key={ingredientKey + i} type={ingredientKey} />
         );
       })
-    )
-    .reduce((arr, el) => {
+    ).reduce((arr, el) => { // befor this line we have array of arrays which is hard to
+      //  run on. 
+      //this line reduce all the inner array into one 
+      //array so only one array with the jsx elemnts will be the output.
       return arr.concat(el);
     }, []);
   if (jsxIngredients.length === 0) {
