@@ -4,7 +4,7 @@ import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import validationRulesEnum from '../../../enums/validationRules';
+import validationRules from '../../../enums/validationRules';
 import classes from './ContactData.module.css';
 
 class ContactData extends Component {
@@ -15,11 +15,31 @@ class ContactData extends Component {
         this.state = {
             isLoading: false,
             form: {
-                name: this.getInputObj('text', 'Your Name'),
-                email: this.getInputObj('email', 'Your Email'),
-                street: this.getInputObj('text', 'Street'),
-                ZIP: this.getInputObj('text', 'ZIP Code', {[validationRulesEnum.required]: validationRulesEnum.required}),
-                country: this.getInputObj('text', 'Country'),
+                name: this.getInputObj('text', 'Your Name', {
+                    [validationRules.required]: validationRules.required, 
+                    [validationRules.minLength]: 5,
+                    [validationRules.maxLength]: 10
+                }, 'name'),
+                email: this.getInputObj('email', 'Your Email', {
+                    [validationRules.required]: validationRules.required, 
+                    [validationRules.minLength]: 5,
+                    [validationRules.maxLength]: 10
+                }, 'email'),
+                street: this.getInputObj('text', 'Street', {
+                    [validationRules.required]: validationRules.required, 
+                    [validationRules.minLength]: 5,
+                    [validationRules.maxLength]: 10
+                }, 'street'),
+                ZIP: this.getInputObj('text', 'ZIP Code', {
+                    [validationRules.required]: validationRules.required, 
+                    [validationRules.minLength]: 5,
+                    [validationRules.maxLength]: 10
+                }, 'zip code'),
+                country: this.getInputObj('text', 'Country', {
+                    [validationRules.required]: validationRules.required, 
+                    [validationRules.minLength]: 5,
+                    [validationRules.maxLength]: 10
+                }, 'country'),
                 deliveryMethod: {
                     elementtype: 'select',
                     elementConfig: {
@@ -28,29 +48,32 @@ class ContactData extends Component {
                             { value: 'cheapest', displayValue: 'Cheapest' }
                         ]
                     },
-                    value: ''
+                    validationRules: {},
+                    value: 'fastest',
+                    isValid: true
                 }
             },
+            isFormValid: false,
             ingredients: this.props.ingredients
         };
     }
 
-    getInputObj = (elementtype, placeholder, validtionRules, value = '') => ({
+    getInputObj = (elementtype, placeholder, validationRules, valueType, value = '') => ({
         elementtype,
         elementConfig: {
             elementtype,
             placeholder,
         },
-        validtionRules: {
-            ...validtionRules
-        },
+        validationRules,
         value,
-        isValid: false
+        valueType,
+        isValid: false,
+        isTouched: false
     });
 
     getFormData = () => {
         const formData = {};
-        for(let inputId in this.state.form) {
+        for (let inputId in this.state.form) {
             formData[inputId] = this.state.form[inputId].value
         }
 
@@ -79,24 +102,41 @@ class ContactData extends Component {
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
-        const clonedForm = {...this.state.form};
-        const clonedInput = {...clonedForm[inputIdentifier]};
+        const clonedForm = { ...this.state.form };
+        const clonedInput = { ...clonedForm[inputIdentifier] };
 
         clonedInput.value = event.target.value;
-        clonedInput.isValid = this.checkValidity(clonedInput.value, clonedInput.validtionRules)
+        clonedInput.isValid = this.checkValidity(clonedInput.value, clonedInput.validationRules)
+        clonedInput.isTouched = true;
         clonedForm[inputIdentifier] = clonedInput;
-        this.setState({form: clonedForm});
+        const isFormValid = this.isFormValid(clonedForm);
+        this.setState({ form: clonedForm, isFormValid });
     }
 
-    checkValidity = (value, validationRules) => {
-        let isValid = false;
-        if(validationRules[validationRulesEnum.required]){
+    checkValidity = (value, validations) => {
+        let isValid = true;
+        if (validations[validationRules.required]) {
             isValid = value.trim().length > 0;
         }
-        console.log(isValid);
+        if (validations[validationRules.maxLength]) {
+            isValid = value.length <= validations[validationRules.maxLength] && isValid;
+        }
+        if (validations[validationRules.minLength]) {
+            isValid = value.length >= validations[validationRules.minLength] && isValid;
+        }
 
         return isValid;
     };
+
+    isFormValid = form => {
+        let isValid = true;
+
+        for(let fieldKey in form) {
+            isValid = form[fieldKey].isValid && isValid;
+        }
+
+        return isValid;
+    }
 
     render() {
 
@@ -115,9 +155,13 @@ class ContactData extends Component {
                     changed={(event) => this.inputChangedHandler(event, inputElement.id)}
                     elementtype={inputElement.config.elementtype}
                     config={inputElement.config.elementConfig}
-                    value={inputElement.config.value}/>
+                    value={inputElement.config.value}
+                    invalid={!inputElement.config.isValid}
+                    valueType={inputElement.config.valueType}
+                    shouldValidate={inputElement.config.validationRules}
+                    isTouched={inputElement.config.isTouched} />
             })}
-            <Button btnType='Success' clicked={this.orderHandler}>Order</Button>
+            <Button disabled={!this.state.isFormValid} btnType='Success' clicked={this.orderHandler}>Order</Button>
         </form>;
 
         return (

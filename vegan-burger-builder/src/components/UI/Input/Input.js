@@ -2,17 +2,31 @@ import React from 'react';
 
 import classes from './Input.module.css';
 
-const input = (props) => (
-    <div className={classes.Input}>
-        <label className={classes.Lable}>{props.lable}</label>
-        {inputTypes[props.elementtype](props.config, props.value, props.changed)}
-    </div>
-)
+const input = (props) => {
 
-const inputTypes = {
-    text: (config, value, changed) => <input className={classes.InputElement} value={value} {...config} onChange={changed} />,
-    email: (config, value, changed) => <input type='email' className={classes.InputElement} value={value} {...config} onChange={changed}/>,
-    select: (config, value, changed) => (<select className={classes.InputElement} onChange={changed}>
+    let inputClasses = [classes.InputElement];
+    let validationError = null;
+    if (props.invalid && props.shouldValidate && props.isTouched) {
+        inputClasses.push(classes.Invalid);
+        validationError = <p className={classes.ValidationError}>Please enter a valid {props.valueType}</p>
+    }
+
+    inputClasses = inputClasses.join(' ');
+
+    const inputElement = inputs[props.elementtype](props.config, props.value, props.changed, inputClasses);
+
+
+    return <div className={classes.Input}>
+        <label className={classes.Lable}>{props.lable}</label>
+        {inputElement}
+        {validationError}
+    </div>
+}
+
+const inputs = {
+    text: (config, value, changed, inputClasses) => <input className={inputClasses} value={value} {...config} onChange={changed} />,
+    email: (config, value, changed, inputClasses) => <input type='email' className={inputClasses} value={value} {...config} onChange={changed} />,
+    select: (config, value, changed, inputClasses) => (<select className={inputClasses} onChange={changed}>
         {config.options.map(option => (
             <option key={option.value} value={option.value}>
                 {option.displayValue}
