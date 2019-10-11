@@ -5,7 +5,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import WithErrorHandler from '../../hoc/WithErrorHandler';
-import * as actionTypes from '../../store/actions';
+import * as burgerBuilderActions from '../../store/actions/index';
 import { connect } from 'react-redux';
 
 import axios from '../../axios-orders';
@@ -132,7 +132,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  addingIngredient: ingredientName => dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName }),
-  removingIngredient: ingredientName => dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName })
+  addingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName)),
+  removingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandler(BurgerBuilder, axios));
