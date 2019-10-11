@@ -14,9 +14,7 @@ import axios from '../../axios-orders';
 class BurgerBuilder extends Component {
   state = {
     isPurchaseable: false,
-    isPurchasing: false,
-    isLoading: false,
-    error: false
+    isPurchasing: false
   };
 
   updatePurchaseState(ingredients) {
@@ -75,6 +73,7 @@ class BurgerBuilder extends Component {
     //   .catch(error => {
     //     this.setState({ isLoading: false, error: true });
     //   });
+    this.props.fetchingIngredients();
   }
 
   render() {
@@ -87,7 +86,7 @@ class BurgerBuilder extends Component {
     }
     let orderSummary = null;
 
-    let burger = this.state.error ? <p>cannot load ingredients</p> : <Spinner />;
+    let burger = this.props.error ? <p>cannot load ingredients</p> : <Spinner />;
 
     if (this.props.ingredients) {
       burger = <>
@@ -110,9 +109,9 @@ class BurgerBuilder extends Component {
 
     }
 
-    if (this.state.isLoading) {
-      orderSummary = <Spinner />
-    }
+    // if (this.state.isLoading) {
+    //   orderSummary = <Spinner />
+    // }
 
 
     return (
@@ -128,11 +127,13 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => ({
   ingredients: state.ingredients,
-  price: state.totalPrice
+  price: state.totalPrice,
+  error: state.error
 });
 
 const mapDispatchToProps = dispatch => ({
   addingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName)),
-  removingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName))
+  removingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName)),
+  fetchingIngredients: () => dispatch(burgerBuilderActions.fetchingIngredients())
 })
 export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandler(BurgerBuilder, axios));
