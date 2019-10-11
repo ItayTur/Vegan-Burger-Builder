@@ -1,4 +1,4 @@
-# Redux-Counter
+# Vegan-Burger-Builder
 
 Udemy react study project - accomplished by following the course for react by Maximilian Schwarzmüller.
 
