@@ -5,7 +5,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import WithErrorHandler from '../../hoc/WithErrorHandler';
-import * as burgerBuilderActions from '../../store/actions/index';
+import * as actions from '../../store/actions/index';
 import { connect } from 'react-redux';
 
 import axios from '../../axios-orders';
@@ -62,6 +62,7 @@ class BurgerBuilder extends Component {
     // const searchParamIngredients = Object.keys(this.state.ingredients).map(igKey =>
     //   igKey + '=' + this.state.ingredients[igKey]).join('&') + '&totalPrice=' + this.props.price;
     // this.props.history.push('/checkout/?' + searchParamIngredients);
+    this.props.orderInit();
     this.props.history.push('/checkout');
   }
 
@@ -126,14 +127,15 @@ class BurgerBuilder extends Component {
 }
 
 const mapStateToProps = state => ({
-  ingredients: state.ingredients,
-  price: state.totalPrice,
-  error: state.error
+  ingredients: state.burgerBuilder.ingredients,
+  price: state.burgerBuilder.totalPrice,
+  error: state.burgerBuilder.error
 });
 
 const mapDispatchToProps = dispatch => ({
-  addingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName)),
-  removingIngredient: ingredientName => dispatch(burgerBuilderActions.addingIngredient(ingredientName)),
-  fetchingIngredients: () => dispatch(burgerBuilderActions.fetchingIngredients())
+  addingIngredient: ingredientName => dispatch(actions.addingIngredient(ingredientName)),
+  removingIngredient: ingredientName => dispatch(actions.addingIngredient(ingredientName)),
+  fetchingIngredients: () => dispatch(actions.fetchingIngredients()),
+  orderInit: () => dispatch(actions.orderInit())
 })
 export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandler(BurgerBuilder, axios));

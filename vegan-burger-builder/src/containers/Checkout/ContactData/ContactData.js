@@ -7,6 +7,8 @@ import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import validationRules from '../../../enums/validationRules';
 import classes from './ContactData.module.css';
+import withErrorHandler from '../../../hoc/WithErrorHandler';
+import * as actions from '../../../store/actions/index';
 
 class ContactData extends Component {
 
@@ -14,30 +16,29 @@ class ContactData extends Component {
         super(props);
 
         this.state = {
-            isLoading: false,
             form: {
                 name: this.getInputObj('text', 'Your Name', {
-                    [validationRules.required]: validationRules.required, 
+                    [validationRules.required]: validationRules.required,
                     [validationRules.minLength]: 5,
                     [validationRules.maxLength]: 10
                 }, 'name'),
                 email: this.getInputObj('email', 'Your Email', {
-                    [validationRules.required]: validationRules.required, 
+                    [validationRules.required]: validationRules.required,
                     [validationRules.minLength]: 5,
                     [validationRules.maxLength]: 10
                 }, 'email'),
                 street: this.getInputObj('text', 'Street', {
-                    [validationRules.required]: validationRules.required, 
+                    [validationRules.required]: validationRules.required,
                     [validationRules.minLength]: 5,
                     [validationRules.maxLength]: 10
                 }, 'street'),
                 ZIP: this.getInputObj('text', 'ZIP Code', {
-                    [validationRules.required]: validationRules.required, 
+                    [validationRules.required]: validationRules.required,
                     [validationRules.minLength]: 5,
                     [validationRules.maxLength]: 10
                 }, 'zip code'),
                 country: this.getInputObj('text', 'Country', {
-                    [validationRules.required]: validationRules.required, 
+                    [validationRules.required]: validationRules.required,
                     [validationRules.minLength]: 5,
                     [validationRules.maxLength]: 10
                 }, 'country'),
@@ -83,7 +84,6 @@ class ContactData extends Component {
 
     orderHandler = (event) => {
         event.preventDefault();
-        this.setState({ isLoading: true });
         const formData = this.getFormData();
         const order = {
             ingredients: this.props.ings,
@@ -91,15 +91,7 @@ class ContactData extends Component {
             orderData: formData
         };
 
-
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({ isLoading: false })
-                this.props.history.goBack();
-            })
-            .catch(error => {
-                this.setState({ isLoading: false })
-            });
+        this.props.startOrder(order);
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -132,7 +124,7 @@ class ContactData extends Component {
     isFormValid = form => {
         let isValid = true;
 
-        for(let fieldKey in form) {
+        for (let fieldKey in form) {
             isValid = form[fieldKey].isValid && isValid;
         }
 
@@ -149,7 +141,7 @@ class ContactData extends Component {
             });
         };
 
-        let form = this.state.isLoading ? <Spinner /> : <form> {
+        let form = this.props.isLoading ? <Spinner /> : <form> {
             inputElements.map((inputElement) => {
                 return <Input
                     key={inputElement.id}
@@ -175,8 +167,14 @@ class ContactData extends Component {
 }
 
 const mapStateToProps = state => ({
-    ings: state.ingredients,
-    price: state.totalPrice
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    isLoading: state.orders.loading,
+    isOrderSuccess: state.orders.isOrderSuccess
 })
 
-export default connect(mapStateToProps)(ContactData);
+const dispatchToProps = dispatch => ({
+    startOrder: orderData => dispatch(actions.startOrder(orderData))
+});
+
+export default connect(mapStateToProps, dispatchToProps)(withErrorHandler(ContactData, axios));
