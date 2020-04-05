@@ -26,14 +26,14 @@ class Orders extends Component {
         //         this.setState({isLoading: false, orders: fetchedOrders});
         //     })
         //     .catch( error => this.setState({isLoading: false}));
-        this.props.fetchOrders();
+        this.props.fetchOrders(this.props.token, this.props.userId);
     }
 
     render() {
         const orders = this.props.isLoading ? <Spinner/> : 
-        this.props.orders.map(order => (<Order ingredients={order.data.ingredients} 
+        this.props.orders.map(order => (<Order ingredients={order.ingredients} 
             key={order.id}
-             totalPrice={order.data.price} />) )
+             totalPrice={order.price} />) )
         return <div className={classes.Orders}>
             {orders}
         </div>
@@ -43,13 +43,15 @@ class Orders extends Component {
 const mapStateToProps = state => {
     return {
         isLoading: state.orders.loading,
-        orders: state.orders.orders
+        orders: state.orders.orders,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchOrders: () => dispatch(actions.startFetchOrders())
+        fetchOrders: (token, userId) => dispatch(actions.startFetchOrders(token, userId))
     }
 }
 

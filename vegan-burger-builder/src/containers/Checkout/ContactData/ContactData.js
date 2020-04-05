@@ -88,10 +88,11 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         };
 
-        this.props.startOrder(order);
+        this.props.startOrder(order, this.props.token);
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -166,15 +167,18 @@ class ContactData extends Component {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = state => {
+    return {
     ings: state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
     isLoading: state.orders.loading,
-    isOrderSuccess: state.orders.isOrderSuccess
-})
+    isOrderSuccess: state.orders.isOrderSuccess,
+    token: state.auth.token,
+    userId: state.auth.userId
+}}
 
-const dispatchToProps = dispatch => ({
-    startOrder: orderData => dispatch(actions.startOrder(orderData))
+const mapDispatchToProps = dispatch => ({
+    startOrder: (orderData, token) => dispatch(actions.startOrder(orderData, token))
 });
 
-export default connect(mapStateToProps, dispatchToProps)(withErrorHandler(ContactData, axios));
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));

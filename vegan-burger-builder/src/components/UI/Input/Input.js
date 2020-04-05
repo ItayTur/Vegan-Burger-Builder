@@ -32,7 +32,8 @@ const inputs = {
                 {option.displayValue}
             </option>))}
     </select>),
-    textarea: (config) => <textarea {...config} />
+    textarea: (config) => <textarea {...config} />,
+    password: (config, value, changed, inputClasses) => <input type='password' className={inputClasses} value={value} {...config} onChange={changed} />
 };
 
 export default input;
