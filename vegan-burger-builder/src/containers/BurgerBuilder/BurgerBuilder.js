@@ -50,7 +50,12 @@ class BurgerBuilder extends Component {
   // };
 
   purchesHandler = () => {
-    this.setState({ isPurchasing: true });
+    if (this.props.isAuth) {
+      this.setState({ isPurchasing: true });
+    } else {
+      this.props.updateAuthRedirectPath('/checkout')
+      this.props.history.push('/auth');
+    }
   }
 
   cancelHandler = () => {
@@ -74,6 +79,7 @@ class BurgerBuilder extends Component {
     //   .catch(error => {
     //     this.setState({ isLoading: false, error: true });
     //   });
+    this.props.updateAuthRedirectPath('/')
     this.props.fetchingIngredients();
   }
 
@@ -99,6 +105,7 @@ class BurgerBuilder extends Component {
           disabledInfo={disableds}
           isPurchasable={this.updatePurchaseState(this.props.ingredients)}
           Purchasing={this.purchesHandler}
+          isAuth={this.props.isAuth}
         />
       </>
 
@@ -129,13 +136,15 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => ({
   ingredients: state.burgerBuilder.ingredients,
   price: state.burgerBuilder.totalPrice,
-  error: state.burgerBuilder.error
+  error: state.burgerBuilder.error,
+  isAuth: state.auth.token !== null
 });
 
 const mapDispatchToProps = dispatch => ({
   addingIngredient: ingredientName => dispatch(actions.addingIngredient(ingredientName)),
   removingIngredient: ingredientName => dispatch(actions.addingIngredient(ingredientName)),
   fetchingIngredients: () => dispatch(actions.fetchingIngredients()),
-  orderInit: () => dispatch(actions.orderInit())
+  orderInit: () => dispatch(actions.orderInit()),
+  updateAuthRedirectPath: (path) => dispatch(actions.authRedirectPath(path))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandler(BurgerBuilder, axios));

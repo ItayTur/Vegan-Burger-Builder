@@ -19,14 +19,9 @@ const reducer = (state = initialState, action) => {
                 loading: true
             }
         case actionTypes.ON_ORDER_SUCCESS:
-            const newOrder = {
-                id: action.id,
-                order: action.orderData
-            }
             return {
                 ...state,
                 loading: false,
-                orders: state.orders.concat(newOrder),
                 isOrderSuccess: true
             }
         case actionTypes.START_FETCH_ORDERS:
@@ -45,7 +40,8 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 loading: false,
-                isOrderSuccess: false
+                isOrderSuccess: false,
+                orders: []
             }
         default:
             return state;

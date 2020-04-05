@@ -13,10 +13,10 @@ const onStartOrder = () => {
     }
 }
 
-export const startOrder = (order) => {
+export const startOrder = (order, token) => {
     return dispatch => {
         dispatch(onStartOrder());
-        axios.post('/orders.json', order)
+        axios.post('/orders.json?auth=' + token, order)
             .then(response => {
                 dispatch(onOrderSuccess(response.data.name, order))
             })
@@ -47,14 +47,15 @@ const onStartFetchOrders = () => {
     }
 }
 
-export const startFetchOrders = () => {
+export const startFetchOrders = (token, userId) => {
     return dispatch => {
         dispatch(onStartFetchOrders());
-        axios.get('/orders.json')
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId +'"';
+        axios.get('/orders.json' + queryParams)
             .then(response => {
                 let fetchedOrders = [];
                 for(let key in response.data) {
-                    fetchedOrders.push({data: response.data[key], id: key})
+                    fetchedOrders.push({...response.data[key], id: key})
                 };
                 dispatch(fetchOrdersSuccess(fetchedOrders));
             })
