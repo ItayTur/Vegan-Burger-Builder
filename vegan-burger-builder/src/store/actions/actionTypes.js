@@ -6,6 +6,8 @@ export const ON_ERROR = 'ON_ERROR';
 
 export const ORDER_INIT = 'ORDER_INIT';
 export const START_ORDER = 'START_ORDER';
+export const START_ORDER_SAGA = 'START_ORDER_SAGA';
+export const FETCH_ORDER_SAGA = 'FETCH_ORDER_SAGA';
 export const ON_ORDER_SUCCESS = 'ON_ORDER_SUCCESS';
 export const ON_ORDER_FAIL = 'ON_ORDER_FAIL';
 

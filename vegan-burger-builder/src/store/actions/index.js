@@ -5,7 +5,17 @@ export {
     onFetchingIngredients,
     onError
 } from './burgerBuilder';
-export { startOrder, orderInit, startFetchOrders } from './orders';
+export {
+    startOrder,
+    onStartOrder,
+    orderInit,
+    onOrderFail,
+    onOrderSuccess,
+    startFetchOrders,
+    onStartFetchOrders,
+    fetchOrdersSuccess,
+    fetchOrdersFail
+} from './orders';
 export {
     onAuthStart,
     authStart,
