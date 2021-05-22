@@ -6,16 +6,15 @@ const asyncComponent = (importComponent) => {
             component: null
         }
 
-        componentDidMount() {
-            importComponent().then(importedComponent => {
-                this.setState({component: importedComponent.default})
-            })
+        async componentDidMount() {
+            const importedComponent = await importComponent();
+            this.setState({ component: importedComponent.default });
         }
 
         render() {
             const C = this.state.component ? this.state.component : null;
             return (
-                C ? <C {...this.props}/> : null
+                C ? <C {...this.props} /> : null
             )
         }
     }
